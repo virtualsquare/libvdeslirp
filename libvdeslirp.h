@@ -5,12 +5,12 @@
 struct vdeslirp;
 
 #define VDE_INIT_DEFAULT 1
-void vdeslirp_init(struct SlirpConfig *cfg, int flags);
+void vdeslirp_init(SlirpConfig *cfg, int flags);
 
-void vdeslirp_setvprefix(struct SlirpConfig *cfg, int prefix);
-void vdeslirp_setvprefix6(struct SlirpConfig *cfg, int prefix6);
+void vdeslirp_setvprefix(SlirpConfig *cfg, int prefix);
+void vdeslirp_setvprefix6(SlirpConfig *cfg, int prefix6);
 
-struct vdeslirp *vdeslirp_open(struct SlirpConfig *cfg);
+struct vdeslirp *vdeslirp_open(SlirpConfig *cfg);
 ssize_t vdeslirp_send(struct vdeslirp *slirp, const void *buf, size_t count);
 ssize_t vdeslirp_recv(struct vdeslirp *slirp, void *buf, size_t count);
 int vdeslirp_fd(struct vdeslirp *slirp);

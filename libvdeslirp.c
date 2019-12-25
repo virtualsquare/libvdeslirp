@@ -374,7 +374,7 @@ static void *memmaskcpy(void *dest, const void *src, const void *mask, size_t n)
 	return bufdest;
 }
 
-void vdeslirp_init(struct SlirpConfig *cfg, int flags) {
+void vdeslirp_init(SlirpConfig *cfg, int flags) {
 	memset(cfg, 0, sizeof(*cfg));
 	cfg->version = 1;
 
@@ -404,7 +404,7 @@ void vdeslirp_init(struct SlirpConfig *cfg, int flags) {
 	}
 }
 
-void vdeslirp_setvprefix(struct SlirpConfig *cfg, int prefix) {
+void vdeslirp_setvprefix(SlirpConfig *cfg, int prefix) {
 	static const struct in_addr inaddr_any = {.s_addr = INADDR_ANY};
 	memmask(&cfg->vnetmask, sizeof(struct in_addr), prefix);
 	cfg->vnetwork = inaddr_any;
@@ -416,7 +416,7 @@ void vdeslirp_setvprefix(struct SlirpConfig *cfg, int prefix) {
 	char buf[4096];
 }
 
-void vdeslirp_setvprefix6(struct SlirpConfig *cfg, int prefix6) {
+void vdeslirp_setvprefix6(SlirpConfig *cfg, int prefix6) {
 	struct in6_addr vnetmask6;
 	cfg->vprefix_len = prefix6;
 	memmask(&vnetmask6, sizeof(struct in6_addr), prefix6);
@@ -426,7 +426,7 @@ void vdeslirp_setvprefix6(struct SlirpConfig *cfg, int prefix6) {
 		memmaskcpy(&cfg->vnameserver6,  &cfg->vhost6, &vnetmask6, sizeof(struct in6_addr));
 }
 
-struct vdeslirp *vdeslirp_open(struct SlirpConfig *cfg) {
+struct vdeslirp *vdeslirp_open(SlirpConfig *cfg) {
 	struct vdeslirp *slirp = calloc(1, sizeof(struct vdeslirp));
 	if (slirp) {
 		if (socketpair(AF_LOCAL, SOCK_SEQPACKET | SOCK_CLOEXEC, 0, slirp->channel) < 0)
