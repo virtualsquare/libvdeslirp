@@ -115,11 +115,11 @@ void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 #if 0
 		/* currently unsupported by libslirp */
 		case SLIRP_ADD_UNIXFWD:
-			rval = slirp_add_hostunixfwd(slirp_conn->slirp,
+			rval = slirp_add_hostunixfwd(slirp,
 					preq->guest_addr, preq->guest_port, preq->ptrarg);
 			break;
 		case SLIRP_DEL_UNIXFWD:
-			rval = slirp_remove_hostunixfwd(slirp_conn->slirp,
+			rval = slirp_remove_hostunixfwd(slirp,
 					preq->guest_addr, preq->guest_port);
 			break;
 #endif
@@ -187,9 +187,14 @@ int vdeslirp_remove_unixfwd(struct vdeslirp *slirp,
 	return slirp_send_req(slirp, &req);
 }
 
-int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const void *args,
+int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const char *cmdline,
 		struct in_addr guest_addr, int guest_port) {
-	return -1;
+	 struct slirp_request req = {
+    .tag = SLIRP_ADD_EXEC,
+    .ptrarg = cmdline,
+    .guest_addr = guest_addr,
+    .guest_port = guest_port };
+  return slirp_send_req(slirp, &req);
 }
 
 /* TIMER MANAGEMENT */

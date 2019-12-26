@@ -27,7 +27,7 @@ int vdeslirp_add_unixfwd(struct vdeslirp *slirp,
 int vdeslirp_remove_unixfwd(struct vdeslirp *slirp,
     struct in_addr guest_addr, int guest_port);
 
-int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const void *args,
+int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const char *cmdline,
     struct in_addr guest_addr, int guest_port);
 
 #endif

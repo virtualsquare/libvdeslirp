@@ -36,7 +36,7 @@ vdeslirp_add_fwd, vdeslirp_remove_fwd, vdeslirp_add_unixfwd, vdeslirp_remove_uni
 .P
 \fBint vdeslirp_remove_unixfwd(struct vdeslirp *\fR\fIslirp\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
 .P
-\fBint vdeslirp_add_cmdexec(struct vdeslirp *\fR\fIslirp\fR\fB, const void *\fR\fIargs\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
+\fBint vdeslirp_add_cmdexec(struct vdeslirp *\fR\fIslirp\fR\fB, const char *\fR\fIcmdline\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
 .SH "DESCRIPTION"
 Slirp, see libvdelirp(3), is a TCP/IP emulator\. Slirp generates a virtual network using standard user privileges (no need for root access of CAP_NET_ADMIN)\. These functions manage port forwarding services\.
 .P

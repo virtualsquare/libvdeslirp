@@ -41,7 +41,7 @@ vdeslirp_add_fwd, vdeslirp_remove_fwd, vdeslirp_add_unixfwd, vdeslirp_remove_uni
 
 `int vdeslirp_remove_unixfwd(struct vdeslirp *`_slirp_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`); `
 
-`int vdeslirp_add_cmdexec(struct vdeslirp *`_slirp_`, const void *`_args_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`);`
+`int vdeslirp_add_cmdexec(struct vdeslirp *`_slirp_`, const char *`_cmdline_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`);`
 
 ## DESCRIPTION
 
