@@ -88,9 +88,9 @@ struct slirp_request {
   int pipefd[2];
   int intarg;
   const void *ptrarg;
-  struct in_addr host_addr;
+  void *host_addr;
   int host_port;
-  struct in_addr guest_addr;
+  void *guest_addr;
   int guest_port;
 };
 
@@ -102,30 +102,32 @@ static void vdeslirp_guest_error(const char *msg, void *opaque){
 
 void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 	int rval;
+	struct in_addr *host_addr = preq->host_addr;
+	struct in_addr *guest_addr = preq->guest_addr;
 	switch (preq->tag) {
 		case SLIRP_ADD_FWD:
 			rval = slirp_add_hostfwd(slirp, preq->intarg,
-					preq->host_addr, preq->host_port,
-					preq->guest_addr, preq->guest_port);
+					*host_addr, preq->host_port,
+					*guest_addr, preq->guest_port);
 			break;
 		case SLIRP_DEL_FWD:
 			rval = slirp_remove_hostfwd(slirp, preq->intarg,
-					preq->host_addr, preq->host_port);
+					*host_addr, preq->host_port);
 			break;
 #if 0
 		/* currently unsupported by libslirp */
 		case SLIRP_ADD_UNIXFWD:
 			rval = slirp_add_hostunixfwd(slirp,
-					preq->guest_addr, preq->guest_port, preq->ptrarg);
+					*guest_addr, preq->guest_port, preq->ptrarg);
 			break;
 		case SLIRP_DEL_UNIXFWD:
 			rval = slirp_remove_hostunixfwd(slirp,
-					preq->guest_addr, preq->guest_port);
+					*guest_addr, preq->guest_port);
 			break;
 #endif
 		case SLIRP_ADD_EXEC:
 			rval = slirp_add_exec(slirp, preq->ptrarg,
-					&preq->guest_addr, preq->guest_port);
+					guest_addr, preq->guest_port);
 			break;
 		default:
 			rval = -ENOSYS;
@@ -151,9 +153,9 @@ int vdeslirp_add_fwd(struct vdeslirp *slirp, int is_udp,
 	struct slirp_request req = {
 		.tag = SLIRP_ADD_FWD,
 		.intarg = is_udp,
-		.host_addr = host_addr,
+		.host_addr = &host_addr,
 		.host_port = host_port,
-		.guest_addr = guest_addr,
+		.guest_addr = &guest_addr,
 		.guest_port = guest_port };
 	return slirp_send_req(slirp, &req);
 }
@@ -163,7 +165,7 @@ int vdeslirp_remove_fwd(struct vdeslirp *slirp, int is_udp,
 	struct slirp_request req = {
 		.tag = SLIRP_DEL_FWD,
 		.intarg = is_udp,
-		.host_addr = host_addr,
+		.host_addr = &host_addr,
 		.host_port = host_port};
 	return slirp_send_req(slirp, &req);
 }
@@ -172,7 +174,7 @@ int vdeslirp_add_unixfwd(struct vdeslirp *slirp,
 		struct in_addr guest_addr, int guest_port, char *path) {
 	struct slirp_request req = {
 		.tag = SLIRP_ADD_UNIXFWD,
-		.guest_addr = guest_addr,
+		.guest_addr = &guest_addr,
 		.guest_port = guest_port,
 		.ptrarg = path };
 	return slirp_send_req(slirp, &req);
@@ -182,13 +184,13 @@ int vdeslirp_remove_unixfwd(struct vdeslirp *slirp,
 		struct in_addr guest_addr, int guest_port) {
 	struct slirp_request req = {
 		.tag = SLIRP_DEL_UNIXFWD,
-		.guest_addr = guest_addr,
+		.guest_addr = &guest_addr,
 		.guest_port = guest_port};
 	return slirp_send_req(slirp, &req);
 }
 
 int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const char *cmdline,
-		struct in_addr guest_addr, int guest_port) {
+		struct in_addr *guest_addr, int guest_port) {
 	 struct slirp_request req = {
     .tag = SLIRP_ADD_EXEC,
     .ptrarg = cmdline,
