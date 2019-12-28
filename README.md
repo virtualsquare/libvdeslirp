@@ -188,7 +188,7 @@ ipv4-vDNS     10.1.1.3
 
 ### After the configuration: usage of slirp.
 
-There is nothing more to add than what have been already said in the *hello sorld* example above.
+There is nothing more to add than what have been already said in the *hello world* example above.
 
 Start the slirp service:
 ```C

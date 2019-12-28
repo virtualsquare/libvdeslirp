@@ -213,7 +213,7 @@ static void *vdeslirp_timer_new(SlirpTimerCb cb, void *cb_opaque, void *opaque){
 		qt->next = slirp->timer_head;
 		qt->expire_time = -1;
 		qt->handler = cb;
-		qt->opaque = opaque;
+		qt->opaque = cb_opaque;
 		slirp->timer_head=qt;
 	}
 	return qt;
