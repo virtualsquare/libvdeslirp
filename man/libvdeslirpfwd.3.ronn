@@ -37,11 +37,13 @@ vdeslirp_add_fwd, vdeslirp_remove_fwd, vdeslirp_add_unixfwd, vdeslirp_remove_uni
 
 `int vdeslirp_remove_fwd(struct vdeslirp *`_slirp_`, int ` _is_udp_`, struct in_addr ` _host_addr_`, int ` _host_port_`); `
 
-`int vdeslirp_add_unixfwd(struct vdeslirp *`_slirp_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`, char *`_path_`); `
+`int vdeslirp_add_unixfwd(struct vdeslirp *`_slirp_`, char *`_path_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`); `
 
 `int vdeslirp_remove_unixfwd(struct vdeslirp *`_slirp_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`); `
 
 `int vdeslirp_add_cmdexec(struct vdeslirp *`_slirp_`, const char *`_cmdline_`, struct in_addr *`_guest_addr_`, int ` _guest_port_`);`
+
+`int vdeslirp_remove_cmdexec(struct vdeslirp *`_slirp_`, struct in_addr ` _guest_addr_`, int ` _guest_port_`); `
 
 ## DESCRIPTION
 
@@ -51,23 +53,26 @@ CAP_NET_ADMIN).  These functions manage port forwarding services.
 
 `vdeslirp_add_fwd`  and  `vdeslirp_remove_fwd`  respectively  add and remove
 udp or tcp port forwarding services (depending upon the value of is_udp).
-`host_addr` and `host_port` are the IP address and port number bound for the
+_host_addr_ and _host_port_ are the IP address and port number bound for the
 service in  the  host  system.  All  the  connections  or  datagrams to
-`host_addr` and `host_port` will be diverted to `guest_addr` and `guest_port`
+_host_addr_ and _host_port_ will be diverted to _guest_addr_ and _guest_port_
 in the slirp virtual network.
 
 
 `vdeslirp_add_unixfwd` and `vdeslirp_remove_unixfwd` respectively add and
-remove forwarding service towards a `PF_UNIX` stream  socket on  the  hosting
-system.  All the connections from a node of the virtual network to `guest_addr`
-and `guest_port` will be diverted to the `PF_UNIX` bound to the pathname
+remove a forwarding service towards a `PF_UNIX` stream  socket on  the  hosting
+system.  All the connections from a node of the virtual network to _guest_addr_
+and _guest_port_ will be diverted to the `PF_UNIX` bound to the pathname
 path. This feature is commonly used to run X-window  clients  in  the  virtual
 network (e.g. the value of path could be `/tmp/.X11-unix/X0`). (*this feature
 is not yet supported by libslirp*)
 
-`vdeslirp_cmd_fwd`  defines a diversion towards a command. A TCP connection to
-guest_addr` and `guest_port`  will cause the command whose argument array is
-args to be started. 
+`vdeslirp_cmd_fwd` adds a forwarding service to a command. A TCP connection to
+_guest_addr_ and _guest_port_ activates the command _cmdline_. Data exchanged
+on the TCP connection is forwarded as stdin/stdout to the command.
+
+`vdeslirp_add_cmdexec` removes a command forwarding service (*this feature
+is not yet supported by libslirp*)
 
 ## RETURN VALUE
 

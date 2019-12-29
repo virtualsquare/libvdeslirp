@@ -30,6 +30,8 @@
 #include <libvdeslirp.h>
 
 #include <slirp/libslirp.h>
+
+//#define FUTURE_SLIRP_fWD_FEATURES
 #define JUMBOMTU 9014
 
 #define LIBSLIRP_POLLFD_SIZE_INCREASE 16
@@ -82,6 +84,7 @@ struct SlirpCb callbacks = {
 #define SLIRP_ADD_UNIXFWD 0x21
 #define SLIRP_DEL_UNIXFWD 0x22
 #define SLIRP_ADD_EXEC 0x31
+#define SLIRP_DEL_EXEC 0x32
 
 struct slirp_request {
   int tag;
@@ -114,21 +117,24 @@ void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 			rval = slirp_remove_hostfwd(slirp, preq->intarg,
 					*host_addr, preq->host_port);
 			break;
-#if 0
+#ifdef FUTURE_SLIRP_fWD_FEATURES
 		/* currently unsupported by libslirp */
 		case SLIRP_ADD_UNIXFWD:
-			rval = slirp_add_hostunixfwd(slirp,
-					*guest_addr, preq->guest_port, preq->ptrarg);
-			break;
-		case SLIRP_DEL_UNIXFWD:
-			rval = slirp_remove_hostunixfwd(slirp,
-					*guest_addr, preq->guest_port);
+			rval = slirp_add_unix(slirp, preq->ptrarg,
+					guest_addr, preq->guest_port);
 			break;
 #endif
 		case SLIRP_ADD_EXEC:
 			rval = slirp_add_exec(slirp, preq->ptrarg,
 					guest_addr, preq->guest_port);
 			break;
+#ifdef FUTURE_SLIRP_fWD_FEATURES
+		case SLIRP_DEL_UNIXFWD:
+		case SLIRP_DEL_EXEC:
+			rval = slirp_remove_guestfwd(slirp,
+					*guest_addr, preq->guest_port);
+			break;
+#endif
 		default:
 			rval = -ENOSYS;
 	}
@@ -170,11 +176,11 @@ int vdeslirp_remove_fwd(struct vdeslirp *slirp, int is_udp,
 	return slirp_send_req(slirp, &req);
 }
 
-int vdeslirp_add_unixfwd(struct vdeslirp *slirp,
-		struct in_addr guest_addr, int guest_port, char *path) {
+int vdeslirp_add_unixfwd(struct vdeslirp *slirp, char *path,
+		struct in_addr *guest_addr, int guest_port) {
 	struct slirp_request req = {
 		.tag = SLIRP_ADD_UNIXFWD,
-		.guest_addr = &guest_addr,
+		.guest_addr = guest_addr,
 		.guest_port = guest_port,
 		.ptrarg = path };
 	return slirp_send_req(slirp, &req);
@@ -197,6 +203,15 @@ int vdeslirp_add_cmdexec(struct vdeslirp *slirp, const char *cmdline,
     .guest_addr = guest_addr,
     .guest_port = guest_port };
   return slirp_send_req(slirp, &req);
+}
+
+int vdeslirp_remove_cmdexec(struct vdeslirp *slirp,
+		struct in_addr guest_addr, int guest_port) {
+	struct slirp_request req = {
+		.tag = SLIRP_DEL_EXEC,
+		.guest_addr = &guest_addr,
+		.guest_port = guest_port};
+	return slirp_send_req(slirp, &req);
 }
 
 /* TIMER MANAGEMENT */

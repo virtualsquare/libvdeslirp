@@ -32,19 +32,23 @@ vdeslirp_add_fwd, vdeslirp_remove_fwd, vdeslirp_add_unixfwd, vdeslirp_remove_uni
 .P
 \fBint vdeslirp_remove_fwd(struct vdeslirp *\fR\fIslirp\fR\fB, int\fR \fIis_udp\fR\fB, struct in_addr\fR \fIhost_addr\fR\fB, int\fR \fIhost_port\fR\fB);\fR
 .P
-\fBint vdeslirp_add_unixfwd(struct vdeslirp *\fR\fIslirp\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB, char *\fR\fIpath\fR\fB);\fR
+\fBint vdeslirp_add_unixfwd(struct vdeslirp *\fR\fIslirp\fR\fB, char *\fR\fIpath\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
 .P
 \fBint vdeslirp_remove_unixfwd(struct vdeslirp *\fR\fIslirp\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
 .P
 \fBint vdeslirp_add_cmdexec(struct vdeslirp *\fR\fIslirp\fR\fB, const char *\fR\fIcmdline\fR\fB, struct in_addr *\fR\fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
+.P
+\fBint vdeslirp_remove_cmdexec(struct vdeslirp *\fR\fIslirp\fR\fB, struct in_addr\fR \fIguest_addr\fR\fB, int\fR \fIguest_port\fR\fB);\fR
 .SH "DESCRIPTION"
 Slirp, see libvdelirp(3), is a TCP/IP emulator\. Slirp generates a virtual network using standard user privileges (no need for root access of CAP_NET_ADMIN)\. These functions manage port forwarding services\.
 .P
-\fBvdeslirp_add_fwd\fR and \fBvdeslirp_remove_fwd\fR respectively add and remove udp or tcp port forwarding services (depending upon the value of is_udp)\. \fBhost_addr\fR and \fBhost_port\fR are the IP address and port number bound for the service in the host system\. All the connections or datagrams to \fBhost_addr\fR and \fBhost_port\fR will be diverted to \fBguest_addr\fR and \fBguest_port\fR in the slirp virtual network\.
+\fBvdeslirp_add_fwd\fR and \fBvdeslirp_remove_fwd\fR respectively add and remove udp or tcp port forwarding services (depending upon the value of is_udp)\. \fIhost_addr\fR and \fIhost_port\fR are the IP address and port number bound for the service in the host system\. All the connections or datagrams to \fIhost_addr\fR and \fIhost_port\fR will be diverted to \fIguest_addr\fR and \fIguest_port\fR in the slirp virtual network\.
 .P
-\fBvdeslirp_add_unixfwd\fR and \fBvdeslirp_remove_unixfwd\fR respectively add and remove forwarding service towards a \fBPF_UNIX\fR stream socket on the hosting system\. All the connections from a node of the virtual network to \fBguest_addr\fR and \fBguest_port\fR will be diverted to the \fBPF_UNIX\fR bound to the pathname path\. This feature is commonly used to run X\-window clients in the virtual network (e\.g\. the value of path could be \fB/tmp/\.X11\-unix/X0\fR)\. (\fIthis feature is not yet supported by libslirp\fR)
+\fBvdeslirp_add_unixfwd\fR and \fBvdeslirp_remove_unixfwd\fR respectively add and remove a forwarding service towards a \fBPF_UNIX\fR stream socket on the hosting system\. All the connections from a node of the virtual network to \fIguest_addr\fR and \fIguest_port\fR will be diverted to the \fBPF_UNIX\fR bound to the pathname path\. This feature is commonly used to run X\-window clients in the virtual network (e\.g\. the value of path could be \fB/tmp/\.X11\-unix/X0\fR)\. (\fIthis feature is not yet supported by libslirp\fR)
 .P
-\fBvdeslirp_cmd_fwd\fR defines a diversion towards a command\. A TCP connection to guest_addr\fBand\fRguest_port` will cause the command whose argument array is args to be started\.
+\fBvdeslirp_cmd_fwd\fR adds a forwarding service to a command\. A TCP connection to \fIguest_addr\fR and \fIguest_port\fR activates the command \fIcmdline\fR\. Data exchanged on the TCP connection is forwarded as stdin/stdout to the command\.
+.P
+\fBvdeslirp_add_cmdexec\fR removes a command forwarding service (\fIthis feature is not yet supported by libslirp\fR)
 .SH "RETURN VALUE"
 All these functions return 0 in case of success, \-1 otherwise (and \fBerrno\fR is set consequently)\.
 .SH "SEE ALSO"
