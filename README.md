@@ -22,7 +22,7 @@ Libslirp can be installed from its git repository.
 Alternatively, it is a package in Debian Sid thus users of this distribution can simply add the packet:
 
 ```sh
-apt-get install libslirp0 libslirp-dec
+apt-get install libslirp0 libslirp-dev
 ```
 
 ## install libvdeslirp
@@ -64,14 +64,15 @@ at the end:
 ```C
 vdeslirp_close(myslirp);
 ```
+## step  by step tutorial
 
-### include the header file
+### step 1: include the header file
 
 ```C
 #include <slirp/libslirp.h>
 ```
 
-### set up slirp configuration
+### step 2: set up slirp configuration
 
 The confuguration parameters for Slirp are defined in a `SlirpConfig` structure (as defined by libslirp):
 ```C
@@ -186,14 +187,14 @@ dhcp-start    10.1.1.15
 ipv4-vDNS     10.1.1.3
 ```
 
-### After the configuration: usage of slirp.
+### step 3: start slirp
 
-There is nothing more to add than what have been already said in the *hello world* example above.
-
-Start the slirp service:
 ```C
 myslirp = vdeslirp_open(&slirpcfg);
 ```
+
+### step 4: use slirp
+
 send and receive packets (ethernet packets as if it were a tap interface):
 ```C
 n = vdeslirp_send(myslirp, sendbuf, sendlen);
@@ -204,12 +205,12 @@ n = vdeslirp_recv(myslirp, recvbuf, recvlen);
 poll/select or similar system calls can be used to wait for new incoming packets,
 use the return value of `vdeslirp_fd(myslirp)` as the file descriptor.
 
-at the end:
+### step 4 terminate slirp
 ```C
 vdeslirp_close(myslirp);
 ```
 
-### Port forward
+## Port forward
 
 The function `vdeslirp_add_fwd` redirects a UDP or TCP port of the host to a port to a virtual service
 connected to the slirp network.
