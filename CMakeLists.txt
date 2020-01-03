@@ -5,6 +5,8 @@ project("vdeslirp"
     VERSION 0.1.0
     LANGUAGES C)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 -O2 -pedantic -Wall -Wextra")
+
 include(GNUInstallDirs)
 include(CheckIncludeFile)
 include(CheckSymbolExists)

@@ -46,8 +46,6 @@ struct vdeslirp_timer {
   void *opaque;
 };
 
-static struct vdeslirp_timer *timer_head;
-
 struct vdeslirp {
 	Slirp *slirp;
 	pthread_t daemon;
@@ -99,6 +97,7 @@ struct slirp_request {
 };
 
 static void vdeslirp_guest_error(const char *msg, void *opaque){
+	(void) opaque;
 	fprintf(stderr, "vdeslirp: %s\n", msg);
 }
 
@@ -131,7 +130,7 @@ void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 			{
 				size_t cmdlen = strlen(preq->ptrarg) + 8;
 				char cmd[cmdlen];
-				snprintf(cmd, cmdlen, "nc -UN %s", preq->ptrarg);
+				snprintf(cmd, cmdlen, "nc -UN %s", (char *) preq->ptrarg);
 				rval = slirp_add_exec(slirp, cmd,
 						guest_addr, preq->guest_port);
 			}
@@ -161,12 +160,16 @@ void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 /* FWD MANAGEMENT APP SIDE */
 static int slirp_send_req(struct vdeslirp *slirp, struct slirp_request *preq) {
 	int rval;
-	pipe(preq->pipefd);
-	rval = write(slirp->channel[APPSIDE], &preq, sizeof(struct slirp_request *));
-	read(preq->pipefd[APPSIDE],&rval,sizeof(rval));
-	close(preq->pipefd[0]);
-	close(preq->pipefd[1]);
-	return rval < 0 ? (errno = -rval, -1) : rval;
+	if (pipe(preq->pipefd) < 0) {
+		return -1;
+	} else {
+		rval = write(slirp->channel[APPSIDE], &preq, sizeof(struct slirp_request *));
+		if (rval >= 0)
+			rval =  read(preq->pipefd[APPSIDE],&rval,sizeof(rval));
+		close(preq->pipefd[0]);
+		close(preq->pipefd[1]);
+		return rval < 0 ? (errno = -rval, -1) : 0;
+	}
 }
 
 int vdeslirp_add_fwd(struct vdeslirp *slirp, int is_udp,
@@ -232,6 +235,7 @@ int vdeslirp_remove_cmdexec(struct vdeslirp *slirp,
 
 /* TIMER MANAGEMENT */
 static int64_t vdeslirp_clock_get_ns(void *opaque){
+	(void) opaque;
 	struct timespec ts;
 	clock_gettime(CLOCK_MONOTONIC, &ts);
 	return ts.tv_sec * 1000000000LL + ts.tv_nsec;
@@ -263,6 +267,7 @@ static void vdeslirp_timer_free(void *timer, void *opaque){
 }
 
 static void vdeslirp_timer_mod(void *timer, int64_t expire_time, void *opaque){
+	(void) opaque;
 	struct vdeslirp_timer *qt = timer;
 	qt->expire_time = expire_time;
 }
@@ -272,7 +277,7 @@ static void update_ra_timeout(uint32_t *timeout, void *opaque) {
 	struct vdeslirp_timer *qt;
 	int64_t now_ms = vdeslirp_clock_get_ns(opaque) / 1000000;
 	for (qt = slirp->timer_head; qt != NULL; qt =  qt->next) {
-		if (qt->expire_time != -1) {
+		if (qt->expire_time != -1UL) {
 			int64_t diff = qt->expire_time - now_ms;
 			if (diff < 0) diff = 0;
 			if (diff < *timeout) *timeout = diff;
@@ -285,10 +290,10 @@ static void check_ra_timeout(void *opaque) {
 	struct vdeslirp_timer *qt;
 	int64_t now_ms = vdeslirp_clock_get_ns(opaque) / 1000000;
 	for (qt = slirp->timer_head; qt != NULL; qt =  qt->next) {
-		if (qt->expire_time != -1) {
+		if (qt->expire_time != -1UL) {
 			int64_t diff = qt->expire_time - now_ms;
 			if (diff <= 0) {
-				qt->expire_time = -1;
+				qt->expire_time = -1UL;
 				qt->handler(qt->opaque);
 			}
 		}
@@ -342,12 +347,17 @@ static int vdeslirp_get_revents(int idx, void *opaque) {
 }
 
 static void vdeslirp_register_poll_fd(int fd, void *opaque){
+	(void) fd;
+	(void) opaque;
 }
 
 static void vdeslirp_unregister_poll_fd(int fd, void *opaque){
+	(void) fd;
+	(void) opaque;
 }
 
 static void vdeslirp_notify(void *opaque){
+	(void) opaque;
 }
 
 static ssize_t vdeslirp_output(const void *buf, size_t len, void *opaque) {
@@ -451,7 +461,6 @@ void vdeslirp_setvprefix(SlirpConfig *cfg, int prefix) {
 		memmaskcpy(&cfg->vdhcp_start, &cfg->vhost, &cfg->vnetmask, sizeof(struct in_addr));
 	if (cfg->vnameserver.s_addr != inaddr_any.s_addr)
 		memmaskcpy(&cfg->vnameserver, &cfg->vhost, &cfg->vnetmask, sizeof(struct in_addr));
-	char buf[4096];
 }
 
 void vdeslirp_setvprefix6(SlirpConfig *cfg, int prefix6) {
@@ -502,8 +511,9 @@ int vdeslirp_fd(struct vdeslirp *slirp) {
 
 int vdeslirp_close(struct vdeslirp *slirp) {
 	void *retval;
-	close(slirp->channel[APPSIDE]);
+	int rv = close(slirp->channel[APPSIDE]);
 	pthread_join(slirp->daemon, &retval);
 	vdeslirp_cleanup(slirp);
+	return rv;
 }
 
