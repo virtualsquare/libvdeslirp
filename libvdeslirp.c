@@ -28,6 +28,7 @@
 #include <sys/un.h>
 #include <pthread.h>
 #include <libvdeslirp.h>
+#include <config.h>
 
 #include <slirp/libslirp.h>
 
@@ -117,18 +118,33 @@ void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 			rval = slirp_remove_hostfwd(slirp, preq->intarg,
 					*host_addr, preq->host_port);
 			break;
-#ifdef FUTURE_SLIRP_fWD_FEATURES
+#ifdef HAS_ADD_UNIX
 		/* currently unsupported by libslirp */
 		case SLIRP_ADD_UNIXFWD:
 			rval = slirp_add_unix(slirp, preq->ptrarg,
 					guest_addr, preq->guest_port);
 			break;
+#else
+#ifdef HAS_ADD_EXEC
+		/* warkaround */
+		case SLIRP_ADD_UNIXFWD:
+			{
+				size_t cmdlen = strlen(preq->ptrarg) + 8;
+				char cmd[cmdlen];
+				snprintf(cmd, cmdlen, "nc -UN %s", preq->ptrarg);
+				rval = slirp_add_exec(slirp, cmd,
+						guest_addr, preq->guest_port);
+			}
+			break;
 #endif
+#endif
+#ifdef HAS_ADD_EXEC
 		case SLIRP_ADD_EXEC:
 			rval = slirp_add_exec(slirp, preq->ptrarg,
 					guest_addr, preq->guest_port);
 			break;
-#ifdef FUTURE_SLIRP_fWD_FEATURES
+#endif
+#ifdef HAS_REMOVE_GUESTFWD
 		case SLIRP_DEL_UNIXFWD:
 		case SLIRP_DEL_EXEC:
 			rval = slirp_remove_guestfwd(slirp,

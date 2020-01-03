@@ -22,7 +22,7 @@
 .\"
 .\" generated with Ronn-NG/v0.8.0
 .\" http://github.com/apjanke/ronn-ng/tree/0.8.0
-.TH "LIBVDESLIRPFWD" "3" "December 2019" "VirtualSquare"
+.TH "LIBVDESLIRPFWD" "3" "January 2020" "VirtualSquare"
 .SH "NAME"
 vdeslirp_add_fwd, vdeslirp_remove_fwd, vdeslirp_add_unixfwd, vdeslirp_remove_unixfwd, vdeslirp_add_cmdexec \- simple API for slirp, port forwarding
 .SH "SYNOPSIS"
@@ -44,13 +44,15 @@ Slirp, see libvdelirp(3), is a TCP/IP emulator\. Slirp generates a virtual netwo
 .P
 \fBvdeslirp_add_fwd\fR and \fBvdeslirp_remove_fwd\fR respectively add and remove udp or tcp port forwarding services (depending upon the value of is_udp)\. \fIhost_addr\fR and \fIhost_port\fR are the IP address and port number bound for the service in the host system\. All the connections or datagrams to \fIhost_addr\fR and \fIhost_port\fR will be diverted to \fIguest_addr\fR and \fIguest_port\fR in the slirp virtual network\.
 .P
-\fBvdeslirp_add_unixfwd\fR and \fBvdeslirp_remove_unixfwd\fR respectively add and remove a forwarding service towards a \fBPF_UNIX\fR stream socket on the hosting system\. All the connections from a node of the virtual network to \fIguest_addr\fR and \fIguest_port\fR will be diverted to the \fBPF_UNIX\fR bound to the pathname path\. This feature is commonly used to run X\-window clients in the virtual network (e\.g\. the value of path could be \fB/tmp/\.X11\-unix/X0\fR)\. (\fIthis feature is not yet supported by libslirp\fR)
+\fBvdeslirp_add_unixfwd\fR and \fBvdeslirp_remove_unixfwd\fR respectively add and remove a forwarding service towards a \fBPF_UNIX\fR stream socket on the hosting system\. All the connections from a node of the virtual network to \fIguest_addr\fR and \fIguest_port\fR will be diverted to the \fBPF_UNIX\fR bound to the pathname path\. This feature is commonly used to run X\-window clients in the virtual network (e\.g\. the value of path could be \fB/tmp/\.X11\-unix/X0\fR)\.
+.P
+If libslirp does not support \fBslirp_add_unix\fR, \fBvdeslirp_add_unixfwd\fR is implemented by a workaround based on \fBnc\fR(1)\.
 .P
 \fBvdeslirp_cmd_fwd\fR adds a forwarding service to a command\. A TCP connection to \fIguest_addr\fR and \fIguest_port\fR activates the command \fIcmdline\fR\. Data exchanged on the TCP connection is forwarded as stdin/stdout to the command\.
 .P
-\fBvdeslirp_add_cmdexec\fR removes a command forwarding service (\fIthis feature is not yet supported by libslirp\fR)
+\fBvdeslirp_remove_cmdexec\fR removes a command forwarding service\.
 .SH "RETURN VALUE"
-All these functions return 0 in case of success, \-1 otherwise (and \fBerrno\fR is set consequently)\.
+All these functions return 0 in case of success, \-1 otherwise (and \fBerrno\fR is set consequently)\. \fBvdeslirp_remove_cmdexec\fR and \fBvdeslirp_remove_unixfwd\fR return \-1 and set errno to \fBENOSYS\fR if libslirp does not support \fBslirp_remove_guestfwd\fR\.
 .SH "SEE ALSO"
 \fBlibvdeslirp\fR(3), \fBlibvdeslirpcfg\fR(3)
 .SH "BUGS"

@@ -1,0 +1,8 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#cmakedefine HAS_ADD_EXEC
+#cmakedefine HAS_ADD_UNIX
+#cmakedefine HAS_REMOVE_GUESTFWD
+
+#endif

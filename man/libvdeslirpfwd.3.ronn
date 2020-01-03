@@ -58,25 +58,27 @@ service in  the  host  system.  All  the  connections  or  datagrams to
 _host_addr_ and _host_port_ will be diverted to _guest_addr_ and _guest_port_
 in the slirp virtual network.
 
-
 `vdeslirp_add_unixfwd` and `vdeslirp_remove_unixfwd` respectively add and
 remove a forwarding service towards a `PF_UNIX` stream  socket on  the  hosting
 system.  All the connections from a node of the virtual network to _guest_addr_
 and _guest_port_ will be diverted to the `PF_UNIX` bound to the pathname
 path. This feature is commonly used to run X-window  clients  in  the  virtual
-network (e.g. the value of path could be `/tmp/.X11-unix/X0`). (*this feature
-is not yet supported by libslirp*)
+network (e.g. the value of path could be `/tmp/.X11-unix/X0`).
+
+If libslirp does not support `slirp_add_unix`, `vdeslirp_add_unixfwd` is implemented
+by a workaround based on `nc`(1).
 
 `vdeslirp_cmd_fwd` adds a forwarding service to a command. A TCP connection to
 _guest_addr_ and _guest_port_ activates the command _cmdline_. Data exchanged
 on the TCP connection is forwarded as stdin/stdout to the command.
 
-`vdeslirp_add_cmdexec` removes a command forwarding service (*this feature
-is not yet supported by libslirp*)
+`vdeslirp_remove_cmdexec` removes a command forwarding service.
 
 ## RETURN VALUE
 
 All these functions return 0 in case of success, -1 otherwise (and `errno` is set consequently).
+`vdeslirp_remove_cmdexec` and `vdeslirp_remove_unixfwd` return -1 and
+set errno to `ENOSYS` if libslirp does not support `slirp_remove_guestfwd`.
 
 ## SEE ALSO
 
