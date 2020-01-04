@@ -11,7 +11,7 @@ include(GNUInstallDirs)
 include(CheckIncludeFile)
 include(CheckSymbolExists)
 
-set(LIBS_REQUIRED slirp vdeplug_mod pthread)
+set(LIBS_REQUIRED slirp pthread)
 set(HEADERS_REQUIRED libvdeplug.h slirp/libslirp.h)
 set(CMAKE_REQUIRED_QUIET TRUE)
 set(CMAKE_REQUIRED_LIBRARIES slirp)
@@ -39,7 +39,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(vdeslirp SHARED libvdeslirp.c)
-target_link_libraries(vdeslirp -lslirp -lpthread -lvdeplug_mod)
+target_link_libraries(vdeslirp -lslirp -lpthread)
 
 set_target_properties(vdeslirp PROPERTIES VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION_MAJOR})
