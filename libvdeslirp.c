@@ -326,7 +326,7 @@ static int vdeslirp_add_poll(int fd, int events, void *opaque) {
 	struct vdeslirp *slirp = opaque;
 	if (slirp->pfd_len >= slirp->pfd_size) {
 		int newsize = slirp->pfd_size + LIBSLIRP_POLLFD_SIZE_INCREASE;
-		struct pollfd *new = realloc(slirp->pfd,  newsize);
+		struct pollfd *new = realloc(slirp->pfd, newsize * sizeof(struct pollfd));
 		if (new) {
 			slirp->pfd = new;
 			slirp->pfd_size = newsize;
@@ -476,6 +476,11 @@ void vdeslirp_setvprefix6(SlirpConfig *cfg, int prefix6) {
 struct vdeslirp *vdeslirp_open(SlirpConfig *cfg) {
 	struct vdeslirp *slirp = calloc(1, sizeof(struct vdeslirp));
 	if (slirp) {
+		slirp->pfd_size = LIBSLIRP_POLLFD_SIZE_INCREASE;
+		slirp->pfd = malloc(slirp->pfd_size * sizeof(struct pollfd));
+		if (slirp->pfd == NULL) {
+			goto nosocketpair;
+		}
 		if (socketpair(AF_LOCAL, SOCK_SEQPACKET | SOCK_CLOEXEC, 0, slirp->channel) < 0)
 			goto nosocketpair;
 		if ((slirp->slirp = slirp_new(cfg, &callbacks, slirp)) == NULL)
@@ -490,6 +495,9 @@ noslirp:
 	close(slirp->channel[APPSIDE]);
 	close(slirp->channel[DAEMONSIDE]);
 nosocketpair:
+	if (slirp->pfd != NULL) {
+		free(slirp->pfd);
+	}
 	free(slirp);
 	return NULL;
 }
