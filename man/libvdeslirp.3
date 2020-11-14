@@ -20,9 +20,9 @@
 .\" Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
 .\" MA 02110-1301 USA.
 .\"
-.\" generated with Ronn-NG/v0.8.0
-.\" http://github.com/apjanke/ronn-ng/tree/0.8.0
-.TH "LIBVDESLIRP" "3" "December 2019" "VirtualSquare"
+.\" generated with Ronn-NG/v0.9.1
+.\" http://github.com/apjanke/ronn-ng/tree/0.9.1
+.TH "LIBVDESLIRP" "3" "May 2020" "VirtualSquare"
 .SH "NAME"
 vdeslirp_open, vdeslirp_send, vdeslirp_recv, vdeslirp_fd, vdeslirp_close \- simple API for slirp
 .SH "SYNOPSIS"
@@ -89,7 +89,7 @@ typedef struct SlirpConfig {
 .P
 \fBlibvdeslirp\fR provides helper functions to fill in the fields of this structure, see \fBlibvdeslirpcfg\fR(3)\.
 .P
-Programs using \fBlibvdeslirp\fR can send and receive packets using \fBvdeslirp_send\fR and \fBvdeslirp_recv\fR as if they were connected to host network (commonly the Internet) by a NAT/Masquerading router\. \fBvdeslirp_fd\fR provides a valid file descriptor which can be used to wait for incoming packets (using select or poll) and \fBvdeslirp_close\fR terminates a slirp network created be \fBvdeslirp_open\fR\.
+Programs using \fBlibvdeslirp\fR can send and receive packets using \fBvdeslirp_send\fR and \fBvdeslirp_recv\fR as if they were connected to host network (commonly the Internet) by a NAT/Masquerading router\. \fBvdeslirp_fd\fR provides a valid file descriptor which can be used to wait for incoming packets (using select or poll) and \fBvdeslirp_close\fR terminates a slirp network created by \fBvdeslirp_open\fR\.
 .SH "RETURN VALUE"
 \fBvdeslirp_open\fR returns the \fBstruct vdeslirp\fR pointer in case of success\. NULL is returned otherwise\. The return value of \fBvdeslirp_open\fR is the descriptor that must be passed as first argument to all the other functions of this man page\. \fBvdeslirp_send\fR and \fBvdeslirp_recv\fR return the number of bytes sent or received, \-1 in case of error\. \fBvdeslirp_fd\fR returns a valid file descriptor which can be used to wait for incoming packets (using select or poll)\. \fBvdeslirp_close\fR returns zero in case of success, \-1 in case of error\. In case of failure, \fBerrno\fR is set to indicate the type of error\.
 .SH "SEE ALSO"

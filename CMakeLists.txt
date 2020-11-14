@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project("vdeslirp"
     DESCRIPTION "libslirp for Linux made easy peasy"
     HOMEPAGE_URL "https://github.com/rd235/libvdeslirp"
-    VERSION 0.1.0
+    VERSION 0.1.1
     LANGUAGES C)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -D_FORTIFY_SOURCE=2 -O2 -pedantic -Wall -Wextra")

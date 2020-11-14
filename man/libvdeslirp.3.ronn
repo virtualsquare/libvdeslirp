@@ -100,7 +100,7 @@ Programs using `libvdeslirp` can send and receive packets using `vdeslirp_send`
 and `vdeslirp_recv` as if they were  connected to host network (commonly the
 Internet) by a NAT/Masquerading router.  `vdeslirp_fd` provides a valid
 file descriptor which can be used to  wait  for  incoming packets  (using
-select or poll) and `vdeslirp_close` terminates a slirp network created be
+select or poll) and `vdeslirp_close` terminates a slirp network created by
 `vdeslirp_open`.
 
 ## RETURN VALUE
