@@ -39,7 +39,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(vdeslirp SHARED libvdeslirp.c)
-target_link_libraries(vdeslirp -lslirp -lpthread)
+target_link_libraries(vdeslirp slirp pthread)
 
 set_target_properties(vdeslirp PROPERTIES VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION_MAJOR})
