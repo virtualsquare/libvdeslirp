@@ -14,7 +14,7 @@ include(CheckSymbolExists)
 set(LIBS_REQUIRED slirp pthread)
 set(HEADERS_REQUIRED libvdeplug.h slirp/libslirp.h)
 set(CMAKE_REQUIRED_QUIET TRUE)
-set(CMAKE_REQUIRED_LIBRARIES slirp)
+set(CMAKE_REQUIRED_LIBRARIES slirp glib-2.0)
 
 check_symbol_exists("slirp_add_exec" "slirp/libslirp.h" HAS_ADD_EXEC)
 check_symbol_exists("slirp_add_unix" "slirp/libslirp.h" HAS_ADD_UNIX)
@@ -39,7 +39,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_library(vdeslirp SHARED libvdeslirp.c)
-target_link_libraries(vdeslirp slirp pthread)
+target_link_libraries(vdeslirp slirp pthread glib-2.0)
 
 set_target_properties(vdeslirp PROPERTIES VERSION ${PROJECT_VERSION}
 		SOVERSION ${PROJECT_VERSION_MAJOR})
