@@ -424,7 +424,10 @@ static void *memmaskcpy(void *dest, const void *src, const void *mask, size_t n)
 
 void vdeslirp_init(SlirpConfig *cfg, int flags) {
 	memset(cfg, 0, sizeof(*cfg));
-	cfg->version = 1;
+
+	cfg->version =
+		SLIRP_CHECK_VERSION(4, 9, 0) ? 6 :
+		SLIRP_CHECK_VERSION(4, 7, 0) ? 4 : 1;
 
 	if (flags & VDE_INIT_DEFAULT) {
 		cfg->restricted = 0;
