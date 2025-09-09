@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.25)
 project("vdeslirp"
     DESCRIPTION "libslirp for Linux made easy peasy"
     HOMEPAGE_URL "https://github.com/rd235/libvdeslirp"
