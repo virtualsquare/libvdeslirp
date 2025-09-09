@@ -15,6 +15,7 @@ set(LIBS_REQUIRED slirp pthread)
 set(HEADERS_REQUIRED libvdeplug.h slirp/libslirp.h)
 set(CMAKE_REQUIRED_QUIET TRUE)
 set(CMAKE_REQUIRED_LIBRARIES slirp glib-2.0)
+set(CMAKE_REQUIRED_INCLUDES ${INCLUDEDIR})
 
 check_symbol_exists("slirp_add_exec" "slirp/libslirp.h" HAS_ADD_EXEC)
 check_symbol_exists("slirp_add_unix" "slirp/libslirp.h" HAS_ADD_UNIX)
