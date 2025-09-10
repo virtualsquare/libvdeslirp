@@ -32,7 +32,7 @@
 
 #include <slirp/libslirp.h>
 
-//#define FUTURE_SLIRP_fWD_FEATURES
+//#define FUTURE_SLIRP_FWD_FEATURES
 #define JUMBOMTU 9014
 
 #define LIBSLIRP_POLLFD_SIZE_INCREASE 16
