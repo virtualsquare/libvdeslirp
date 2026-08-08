@@ -103,7 +103,7 @@ static void vdeslirp_guest_error(const char *msg, void *opaque){
 
 /* FWD MANAGEMENT DAEMON SIDE */
 
-void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
+static void slirp_do_req(Slirp *slirp, struct slirp_request *preq) {
 	int rval;
 	struct in_addr *host_addr = preq->host_addr;
 	struct in_addr *guest_addr = preq->guest_addr;
