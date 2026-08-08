@@ -12,7 +12,7 @@ include(CheckIncludeFile)
 include(CheckSymbolExists)
 
 set(LIBS_REQUIRED slirp pthread)
-set(HEADERS_REQUIRED libvdeplug.h slirp/libslirp.h)
+set(HEADERS_REQUIRED slirp/libslirp.h)
 set(CMAKE_REQUIRED_QUIET TRUE)
 set(CMAKE_REQUIRED_LIBRARIES slirp glib-2.0)
 set(CMAKE_REQUIRED_INCLUDES ${INCLUDEDIR})
